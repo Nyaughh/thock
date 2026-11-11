@@ -67,6 +67,10 @@ The non-gradient sets use three colours: letters, modifiers, and an accent on Es
 - **Legends** lights the letters from behind, like shine-through caps: one colour, a colour that cycles, or a rainbow wave across the board. With side-printed legends this is the look of a lit F75.
 - **Under the keys** is separate: light between the caps (solid, breathing, wave, or rippling from each press).
 
+In **Light**, shine-through letters and the light under the keys each have their own RGB colour picker and brightness control. Drag in the colour square, choose a swatch, or enter RGB/hex values, including white and pastels. The chosen letter colour is used in **Solid** mode; the under-key colour is used in **Solid**, **Breathe**, and **Reactive** modes. **Cycle** and **Wave** keep their animated colours. Both brightness controls run from 0% to 100%, including animated modes.
+
+Existing saved colours are carried over when updating. To return to the keycap colourway's printed letters, set shine-through to **Off**.
+
 ## Options for the Windows program
 
 ```

@@ -34,6 +34,7 @@ export function buildSettings({ root, rotated, sound, link, onClose, onForget })
   // ── Controls ──────────────────────────────────────────────────────────────
 
   function row(label, control, hint) {
+    if (control.matches('[role="slider"], [role="switch"]') && !control.hasAttribute('aria-label')) control.setAttribute('aria-label', label);
     return h('div', { class: 'row' },
       h('div', { class: 'row-text' }, h('span', { class: 'row-label' }, label), hint && h('span', { class: 'row-hint' }, hint)),
       control);
@@ -48,27 +49,39 @@ export function buildSettings({ root, rotated, sound, link, onClose, onForget })
   function segmented(key, options) {
     const buttons = options.map(([value, label]) =>
       h('button', { type: 'button', onclick: () => pick(key, value) }, label));
-    syncers.push(() => buttons.forEach((b, i) => b.classList.toggle('on', settings[key] === options[i][0])));
+    syncers.push(() => buttons.forEach((b, i) => {
+      const selected = settings[key] === options[i][0];
+      b.classList.toggle('on', selected);
+      b.setAttribute('aria-pressed', String(selected));
+    }));
     return h('div', { class: 'seg' }, buttons);
   }
 
   // A hand-rolled slider: native range inputs drag along the wrong axis when
   // the whole UI is rotated.
-  function slider(key, { min, max, step, track, onInput }) {
-    const el = h('div', { class: `slider ${track ?? ''}`, role: 'slider', 'aria-valuemin': min, 'aria-valuemax': max }, h('i'));
+  function slider(key, { min, max, step, track, onInput, percent = false }) {
+    const el = h('div', { class: `slider ${track ?? ''}${percent ? ' with-value' : ''}`, role: 'slider', tabindex: 0, 'aria-valuemin': min, 'aria-valuemax': max }, h('i'));
     const show = () => {
       el.style.setProperty('--p', (settings[key] - min) / (max - min));
       el.setAttribute('aria-valuenow', settings[key]);
+      if (percent) {
+        const value = `${Math.round(settings[key] * 100)}%`;
+        el.setAttribute('aria-valuetext', value);
+        el.dataset.value = value;
+      }
+    };
+    const update = (value) => {
+      value = Math.max(min, Math.min(max, Math.round((value - min) / step) * step + min));
+      set(key, Number(value.toFixed(4)));
+      show();
+      onInput?.(settings[key]);
     };
     const fromPointer = (e) => {
       const box = el.getBoundingClientRect();
       const along = rotated() ? (e.clientY - box.top) / box.height : (e.clientX - box.left) / box.width;
       const pad = 12 / (rotated() ? box.height : box.width); // thumb radius
       const p = Math.max(0, Math.min(1, (along - pad) / (1 - 2 * pad)));
-      const value = Math.round((min + p * (max - min)) / step) * step;
-      set(key, Number(value.toFixed(4)));
-      show();
-      onInput?.(settings[key]);
+      update(min + p * (max - min));
     };
     el.addEventListener('pointerdown', (e) => {
       e.preventDefault();
@@ -77,8 +90,142 @@ export function buildSettings({ root, rotated, sound, link, onClose, onForget })
       fromPointer(e);
     });
     el.addEventListener('pointermove', (e) => { if (el.hasPointerCapture(e.pointerId)) fromPointer(e); });
+    el.addEventListener('keydown', (e) => {
+      const value = { ArrowRight: settings[key] + step, ArrowUp: settings[key] + step,
+        ArrowLeft: settings[key] - step, ArrowDown: settings[key] - step,
+        PageUp: settings[key] + step * 10, PageDown: settings[key] - step * 10, Home: min, End: max }[e.key];
+      if (value == null) return;
+      e.preventDefault();
+      update(value);
+    });
     syncers.push(show);
     return el;
+  }
+
+  // Inline RGB picker: Android WebView does not reliably supply a native
+  // colour dialog. The square and hue strip use the same rotated coordinates
+  // as the keyboard; RGB and hex fields also allow exact values.
+  function colorPicker(key, label, hint) {
+    const clamp = (value, max = 1) => Math.max(0, Math.min(max, value));
+    const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    const hex = (channels) => '#' + channels.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('');
+    const toHSV = (color, oldHue = 0) => {
+      const [r, g, b] = rgb(color).map((v) => v / 255);
+      const high = Math.max(r, g, b), low = Math.min(r, g, b), delta = high - low;
+      const hue = !delta ? oldHue : high === r ? 60 * (((g - b) / delta + 6) % 6)
+        : high === g ? 60 * ((b - r) / delta + 2) : 60 * ((r - g) / delta + 4);
+      return { h: hue, s: high ? delta / high : 0, v: high };
+    };
+    const fromHSV = ({ h: hue, s, v }) => {
+      const c = v * s, x = c * (1 - Math.abs((hue / 60) % 2 - 1)), m = v - c;
+      const colors = [[c, x, 0], [x, c, 0], [0, c, x], [0, x, c], [x, 0, c], [c, 0, x]];
+      return hex(colors[Math.floor((hue % 360) / 60)].map((value) => (value + m) * 255));
+    };
+    let color = settings[key] ?? '#ff7a3d';
+    let hsv = toHSV(color);
+    const swatch = h('span', { class: 'rgb-preview', 'aria-hidden': 'true' });
+    const area = h('div', { class: 'rgb-area', tabindex: 0, role: 'group',
+      'aria-label': `${label} colour area. Left and right adjust saturation; up and down adjust shade.` }, h('i'));
+    const hue = h('div', { class: 'rgb-hue', tabindex: 0, role: 'slider', 'aria-label': `${label} hue`,
+      'aria-valuemin': 0, 'aria-valuemax': 360 }, h('i'));
+    const channelInputs = ['Red', 'Green', 'Blue'].map((name) => h('input', {
+      type: 'number', min: 0, max: 255, step: 1, inputmode: 'numeric', 'aria-label': `${label} ${name.toLowerCase()}`,
+    }));
+    const hexInput = h('input', { type: 'text', spellcheck: 'false', autocapitalize: 'off', autocomplete: 'off',
+      maxlength: 7, 'aria-label': `${label} hex colour` });
+    const presets = [
+      ['White', '#ffffff'], ['Red', '#ff4d58'], ['Orange', '#ff9b38'], ['Yellow', '#ffd65a'],
+      ['Green', '#4de891'], ['Cyan', '#4ddfff'], ['Blue', '#648cff'], ['Violet', '#b48aff'], ['Pink', '#ff82c5'],
+    ].map(([name, value]) => h('button', { type: 'button', class: 'rgb-preset', style: `--swatch:${value}`,
+      'aria-label': `${label}: ${name}`, title: name, onclick: () => { commit(value); sound.tick(0.5); } }));
+    const show = () => {
+      swatch.style.background = color;
+      area.style.setProperty('--hue', hsv.h);
+      area.style.setProperty('--saturation', `${hsv.s * 100}%`);
+      area.style.setProperty('--shade', `${(1 - hsv.v) * 100}%`);
+      hue.style.setProperty('--hue-position', `${hsv.h / 360 * 100}%`);
+      hue.setAttribute('aria-valuenow', Math.round(hsv.h));
+      rgb(color).forEach((value, i) => {
+        if (document.activeElement !== channelInputs[i]) channelInputs[i].value = value;
+      });
+      if (document.activeElement !== hexInput) hexInput.value = color.toUpperCase();
+      presets.forEach((button) => button.setAttribute('aria-pressed', String(button.style.getPropertyValue('--swatch') === color)));
+    };
+    const commit = (value, preserveHSV = false) => {
+      color = value.toLowerCase();
+      if (!preserveHSV) hsv = toHSV(color, hsv.h);
+      set(key, color);
+      show();
+    };
+    const fromPointer = (element, e) => {
+      const box = element.getBoundingClientRect();
+      return rotated()
+        ? { x: clamp((e.clientY - box.top) / box.height), y: clamp((box.right - e.clientX) / box.width) }
+        : { x: clamp((e.clientX - box.left) / box.width), y: clamp((e.clientY - box.top) / box.height) };
+    };
+    const draggable = (element, update) => {
+      const apply = (e) => { update(fromPointer(element, e)); commit(fromHSV(hsv), true); };
+      element.addEventListener('pointerdown', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        element.setPointerCapture(e.pointerId);
+        apply(e);
+      });
+      element.addEventListener('pointermove', (e) => { if (element.hasPointerCapture(e.pointerId)) apply(e); });
+    };
+    draggable(area, ({ x, y }) => { hsv.s = x; hsv.v = 1 - y; });
+    draggable(hue, ({ x }) => { hsv.h = Math.min(359.99, x * 360); });
+    area.addEventListener('keydown', (e) => {
+      if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+      e.preventDefault();
+      const step = e.shiftKey ? 0.1 : 0.01;
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') hsv.s = clamp(hsv.s + (e.key === 'ArrowRight' ? step : -step));
+      else hsv.v = clamp(hsv.v + (e.key === 'ArrowUp' ? step : -step));
+      commit(fromHSV(hsv), true);
+    });
+    hue.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 10 : 1;
+      const value = { ArrowRight: hsv.h + step, ArrowUp: hsv.h + step, ArrowLeft: hsv.h - step,
+        ArrowDown: hsv.h - step, Home: 0, End: 359 }[e.key];
+      if (value == null) return;
+      e.preventDefault(); hsv.h = clamp(value, 359.99); commit(fromHSV(hsv), true);
+    });
+    channelInputs.forEach((input, index) => {
+      input.addEventListener('input', () => {
+        const value = Number(input.value);
+        const valid = input.value !== '' && Number.isInteger(value) && value >= 0 && value <= 255;
+        input.setAttribute('aria-invalid', String(!valid));
+        if (!valid) return;
+        const channels = rgb(color); channels[index] = value; commit(hex(channels));
+      });
+      input.addEventListener('blur', () => {
+        input.value = rgb(color)[index]; input.removeAttribute('aria-invalid');
+      });
+    });
+    hexInput.addEventListener('input', () => {
+      let value = hexInput.value.trim().replace(/^#/, '');
+      const valid = /^[\da-f]{6}$/i.test(value) || /^[\da-f]{3}$/i.test(value);
+      hexInput.setAttribute('aria-invalid', String(!valid));
+      if (!valid) return;
+      if (value.length === 3) value = [...value].map((c) => c + c).join('');
+      commit('#' + value);
+    });
+    hexInput.addEventListener('blur', () => { hexInput.value = color.toUpperCase(); hexInput.removeAttribute('aria-invalid'); });
+    for (const input of [...channelInputs, hexInput]) {
+      input.addEventListener('pointerdown', (e) => e.stopPropagation());
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
+    }
+    syncers.push(() => {
+      const next = settings[key] ?? color;
+      if (next !== color) { color = next; hsv = toHSV(color, hsv.h); }
+      show();
+    });
+    return h('div', { class: 'rgb-picker', role: 'group', 'aria-label': `${label} RGB picker` },
+      h('div', { class: 'rgb-heading' }, h('span', {}, 'Colour'), swatch),
+      area, hue,
+      h('div', { class: 'rgb-values' }, channelInputs.map((input, index) => h('label', {}, ['R', 'G', 'B'][index], input)),
+        h('label', { class: 'rgb-hex' }, 'Hex', hexInput)),
+      h('div', { class: 'rgb-presets' }, presets),
+      h('p', { class: 'rgb-hint' }, hint));
   }
 
   // ── Tabs ──────────────────────────────────────────────────────────────────
@@ -140,15 +287,16 @@ export function buildSettings({ root, rotated, sound, link, onClose, onForget })
   };
 
   const glowTab = () => [
-    h('h3', {}, 'Legends'),
+    h('h3', {}, 'Shine-through'),
     segmented('lit', [['off', 'Off'], ['solid', 'Solid'], ['cycle', 'Cycle'], ['wave', 'Wave']]),
-    h('p', { class: 'note' }, 'Lights the letters from behind, like shine-through caps. Cycle changes colour over time; Wave sends a rainbow across the board.'),
+    h('p', { class: 'note' }, 'Lights the letters on the keycaps. Cycle changes colour over time; Wave moves a rainbow across the board.'),
+    colorPicker('litColor', 'Shine-through', 'Your colour is used in Solid mode.'),
+    row('Shine-through brightness', slider('litLevel', { min: 0, max: 1, step: 0.05, percent: true })),
     h('h3', {}, 'Under the keys'),
     segmented('glow', [['off', 'Off'], ['static', 'Solid'], ['breathe', 'Breathe'], ['wave', 'Wave'], ['reactive', 'Reactive']]),
     h('p', { class: 'note' }, 'Light between the caps. Pick the Pudding profile to let it through the sides as well.'),
-    h('h3', {}, 'Colour'),
-    row('Hue', slider('glowHue', { min: 0, max: 360, step: 2, track: 'hue' }), 'For the Solid, Breathe and Reactive modes'),
-    row('Brightness under the keys', slider('glowLevel', { min: 0.2, max: 1, step: 0.05 })),
+    colorPicker('glowColor', 'Under-key', 'Your colour is used in Solid, Breathe and Reactive modes.'),
+    row('Under-key brightness', slider('glowLevel', { min: 0, max: 1, step: 0.05, percent: true })),
   ];
 
   const feelTab = () => [
@@ -217,7 +365,7 @@ function dragScroll(el, rotated) {
 
   el.addEventListener('pointerdown', (e) => {
     // Upright, the browser scrolls natively; this only takes over when rotated.
-    if (e.pointerType === 'mouse' || !rotated()) return;
+    if (e.pointerType === 'mouse' || !rotated() || e.target.closest('input, [role="slider"], .rgb-area')) return;
     cancelAnimationFrame(coast);
     last = { pos: rotated() ? -e.clientX : e.clientY, t: e.timeStamp, id: e.pointerId };
     velocity = 0;

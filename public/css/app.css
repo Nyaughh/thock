@@ -201,8 +201,8 @@ button { font: inherit; color: inherit; }
    around the letter. */
 [data-lit="solid"] .keys .key:not(.knob) .lg,
 [data-lit="cycle"] .keys .key:not(.knob) .lg,
-[data-lit="wave"] .keys .key:not(.knob) .lg { text-shadow: 0 0 1.5px rgba(0, 0, 0, .7), 0 0 calc(var(--u) * .1) currentColor; }
-[data-lit]:not([data-lit="off"]) .keys .key:not(.knob) .lg.on-pale { text-shadow: 0 0 calc(var(--u) * .06) currentColor; }
+[data-lit="wave"] .keys .key:not(.knob) .lg { text-shadow: 0 0 1.5px rgba(0, 0, 0, calc(.7 * var(--lit-level))), 0 0 calc(var(--u) * .1 * var(--lit-level)) currentColor; }
+[data-lit]:not([data-lit="off"]) .keys .key:not(.knob) .lg.on-pale { text-shadow: 0 0 calc(var(--u) * .06 * var(--lit-level)) currentColor; }
 
 /* Indicator lights: caps lock, latched modifiers. */
 .led {
@@ -250,7 +250,7 @@ button { font: inherit; color: inherit; }
    the compositor and cannot delay a key press. */
 
 .glow { position: absolute; inset: 0; overflow: hidden; pointer-events: none; display: none; opacity: var(--glow-level); }
-[data-glow="static"] .glow, [data-glow="breathe"] .glow { display: block; background: hsl(var(--glow-hue) 100% 56%); }
+[data-glow="static"] .glow, [data-glow="breathe"] .glow { display: block; background: rgb(var(--glow-rgb)); }
 [data-glow="breathe"] .glow { animation: breathe 3.8s ease-in-out infinite; will-change: opacity; }
 @keyframes breathe { 0%, 100% { opacity: calc(var(--glow-level) * .15); } 50% { opacity: var(--glow-level); } }
 [data-glow="wave"] .glow { display: block; }
@@ -262,11 +262,11 @@ button { font: inherit; color: inherit; }
   animation: wave 7s linear infinite; will-change: transform;
 }
 @keyframes wave { to { transform: translate3d(-50%, 0, 0); } }
-[data-glow="reactive"] .glow { display: block; background: hsl(var(--glow-hue) 100% 56% / .1); }
+[data-glow="reactive"] .glow { display: block; background: rgb(var(--glow-rgb) / .1); }
 .ripple {
   position: absolute; width: calc(var(--u) * 5.5); height: calc(var(--u) * 5.5); border-radius: 50%;
   margin: calc(var(--u) * -2.75) 0 0 calc(var(--u) * -2.75);
-  background: radial-gradient(circle, hsl(var(--glow-hue) 100% 62%) 0%, hsl(var(--glow-hue) 100% 56% / .55) 30%, transparent 68%);
+  background: radial-gradient(circle, rgb(var(--glow-rgb)) 0%, rgb(var(--glow-rgb) / .55) 30%, transparent 68%);
   animation: ripple 650ms cubic-bezier(.2, .7, .3, 1) forwards; will-change: transform, opacity;
 }
 @keyframes ripple { from { transform: scale(.15); opacity: 1; } to { transform: scale(1); opacity: 0; } }
@@ -468,3 +468,46 @@ button { font: inherit; color: inherit; }
   .cap, .pad-btn, .drawer, .toast, .toggle i { transition-duration: 1ms; }
   [data-glow="wave"] .glow::before, [data-glow="breathe"] .glow, .ripple { animation: none; }
 }
+
+/* Inline RGB controls work in the Android WebView and a rotated browser. */
+.rgb-picker { display: grid; gap: .65rem; margin: .9rem 0 .55rem; min-width: 0; }
+.rgb-heading { display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+.rgb-preview { width: 2.1rem; height: 1.1rem; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }
+.rgb-area {
+  position: relative; height: 7.5rem; min-width: 0; border-radius: var(--r); cursor: crosshair; touch-action: none;
+  background: linear-gradient(0deg, #000, transparent), linear-gradient(90deg, #fff, transparent), hsl(var(--hue) 100% 50%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+}
+.rgb-area i, .rgb-hue i {
+  position: absolute; pointer-events: none; width: 14px; height: 14px; border: 2px solid #fff; border-radius: 50%;
+  box-shadow: 0 0 0 1px #0009; transform: translate(-50%, -50%);
+}
+.rgb-area i { left: clamp(7px, var(--saturation), calc(100% - 7px)); top: clamp(7px, var(--shade), calc(100% - 7px)); }
+.rgb-hue {
+  position: relative; height: 1.6rem; touch-action: none; cursor: pointer; border-radius: var(--r);
+  background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+}
+.rgb-hue i { top: 50%; left: clamp(7px, var(--hue-position), calc(100% - 7px)); }
+.rgb-values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(5.2rem, 1.6fr); gap: .45rem; min-width: 0; }
+.rgb-values label { display: grid; gap: .25rem; min-width: 0; font-size: .68rem; font-weight: 600; color: var(--panel-dim); }
+.rgb-values input {
+  width: 100%; min-width: 0; height: 2.2rem; border: 1px solid var(--line); border-radius: var(--r); padding: .35rem .45rem;
+  background: #08090a; color: var(--panel-ink); font: 500 .85rem var(--mono); user-select: text; touch-action: manipulation;
+}
+.rgb-values input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
+.rgb-values input::-webkit-inner-spin-button, .rgb-values input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.rgb-values input[aria-invalid="true"] { border-color: #ff8f7a; }
+.rgb-presets { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: .4rem; }
+.rgb-preset {
+  position: relative; min-width: 0; height: 2.2rem; padding: 0; border: 1px solid var(--line); border-radius: var(--r);
+  background: none; cursor: pointer;
+}
+.rgb-preset::before { content: ""; position: absolute; inset: 5px; border-radius: 1px; background: var(--swatch); }
+.rgb-preset[aria-pressed="true"] { border-color: var(--hi); box-shadow: 0 0 0 1px var(--hi); }
+.rgb-hint { margin: -.05rem 0 .2rem; font-size: .72rem; color: var(--panel-dim); }
+.rgb-picker + .row { border-top: 0; }
+.slider.with-value { margin-bottom: .8rem; }
+.slider.with-value::after { content: attr(data-value); position: absolute; right: 0; bottom: -.7rem; color: var(--panel-dim); font-size: .68rem; font-variant-numeric: tabular-nums; }
+.slider:focus-visible, .rgb-area:focus-visible, .rgb-hue:focus-visible,
+.rgb-values input:focus-visible, .rgb-preset:focus-visible { outline: 2px solid var(--hi); outline-offset: 3px; }

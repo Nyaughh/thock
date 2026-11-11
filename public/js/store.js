@@ -1,3 +1,5 @@
+import { DEFAULT_LIGHTING, clampLevel, normalizeHex, normalizeLighting } from './light-color.js';
+
 // Settings, kept in localStorage when the browser allows it.
 
 // v2: the look changed (square caps, corner legends, new colourways), so
@@ -19,8 +21,7 @@ const DEFAULTS = {
   // glow
   lit: 'wave',      // legends lit from behind: off | solid | cycle | wave
   glow: 'off',      // light under the keys
-  glowHue: 22,
-  glowLevel: 0.8,
+  ...DEFAULT_LIGHTING,
   // controls
   sticky: true,
   repeat: true,
@@ -39,8 +40,13 @@ function write(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* private mode */ }
 }
 
-const saved = read(STORAGE_KEY) ?? {};
-export const settings = { ...DEFAULTS, ...saved, custom: { ...DEFAULTS.custom, ...saved.custom } };
+const stored = read(STORAGE_KEY);
+const saved = stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
+const { glowHue: legacyHue, ...current } = saved;
+export const settings = {
+  ...DEFAULTS, ...current, ...normalizeLighting(saved),
+  custom: { ...DEFAULTS.custom, ...saved.custom },
+};
 
 const listeners = new Set();
 
@@ -57,6 +63,8 @@ function save() {
 addEventListener('pagehide', () => { if (saveTimer) { clearTimeout(saveTimer); write(STORAGE_KEY, settings); } });
 
 export function set(key, value) {
+  if (key === 'glowColor' || key === 'litColor') value = normalizeHex(value, settings[key]);
+  if (key === 'glowLevel' || key === 'litLevel') value = clampLevel(value, settings[key]);
   if (settings[key] === value) return;
   settings[key] = value;
   save();

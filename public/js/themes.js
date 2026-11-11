@@ -1,3 +1,5 @@
+import { hexToRgb } from './light-color.js';
+
 // Keycap colourways, cases and profiles. Applied as CSS variables.
 //
 // A colourway is a case plus keycap colours. Most are three flat colours,
@@ -153,8 +155,9 @@ export function applyTheme(root, settings) {
     // The plate under the switches: in shadow on a pale case, near black on a dark one.
     '--plate': shade(body, light ? -0.36 : -0.55),
     '--desk': shade(body, light ? -0.78 : -0.72),
-    '--glow-hue': settings.glowHue,
+    '--glow-rgb': hexToRgb(settings.glowColor).join(' '),
     '--glow-level': settings.glowLevel,
+    '--lit-level': settings.litLevel,
   };
   for (const [name, value] of Object.entries(vars)) root.style.setProperty(name, value);
   root.dataset.profile = PROFILES.some((p) => p.id === settings.profile) ? settings.profile : 'cherry';

@@ -9,8 +9,8 @@ android {
         applicationId 'app.thock'
         minSdk 28        // Android 9: the first version that lets an app be a Bluetooth keyboard
         targetSdk 35
-        versionCode 1
-        versionName '1.0'
+        versionCode 2
+        versionName '1.1.0'
     }
 
     compileOptions {

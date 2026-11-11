@@ -118,7 +118,7 @@ function theme() {
     keyboard.tint((t, step) => keyTint(settings, t, step));
     legendLight.refresh();
   }
-  legendLight.set(settings.lit, settings.glowHue);
+  legendLight.set(settings.lit, settings.litColor, settings.litLevel);
   // Other places that draw keycaps follow the chosen profile.
   for (const el of document.querySelectorAll('[data-theme-scope]')) el.dataset.profile = settings.profile;
 }

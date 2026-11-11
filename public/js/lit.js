@@ -1,3 +1,5 @@
+import { DEFAULT_LIGHTING, clampLevel, dimColor, normalizeHex } from './light-color.js';
+
 // Lit legends: the letters glow from behind, like shine-through caps, and can
 // change colour. Not the same thing as the light under the keys (.glow).
 //
@@ -22,6 +24,8 @@ export class LegendLight {
   #legends = [];   // { el, kx, lightness }
   #mode = 'off';
   #hue = 0;
+  #color = DEFAULT_LIGHTING.litColor;
+  #level = 1;
   #timer = null;
   #group = 0;
 
@@ -48,16 +52,17 @@ export class LegendLight {
     this.#paint(0, 1);
   }
 
-  /** mode: off | solid | cycle | wave. hue: 0–360, used by solid. */
-  set(mode, hue) {
-    if (mode === 'solid') this.#hue = hue;
+  /** Solid uses the selected RGB colour. Brightness also dims cycle/wave. */
+  set(mode, color, level = 1) {
+    this.#color = normalizeHex(color, this.#color);
+    this.#level = clampLevel(level, this.#level);
     this.#mode = mode;
     this.#paint(0, 1);
     this.#run();
   }
 
   #run() {
-    const moving = (this.#mode === 'cycle' || this.#mode === 'wave') && !document.hidden;
+    const moving = (this.#mode === 'cycle' || this.#mode === 'wave') && this.#level > 0 && !document.hidden;
     if (moving && !this.#timer) {
       this.#timer = setInterval(() => {
         this.#hue = (this.#hue + (DEGREES_PER_SECOND * TICK_MS) / 1000) % 360;
@@ -77,10 +82,13 @@ export class LegendLight {
       return;
     }
     const wave = this.#mode === 'wave';
+    const solid = this.#mode === 'solid' ? dimColor(this.#color, this.#level) : null;
     for (let i = first; i < legends.length; i += step) {
       const { el, kx, lightness } = legends[i];
       const hue = wave ? (this.#hue - kx * SPREAD + 720) % 360 : this.#hue;
-      el.style.color = `hsl(${hue.toFixed(0)} 96% ${lightness})`;
+      el.style.color = this.#mode === 'solid'
+        ? solid
+        : `hsl(${hue.toFixed(0)} 96% ${(parseFloat(lightness) * this.#level).toFixed(2)}%)`;
     }
   }
 }

@@ -221,7 +221,9 @@ public final class MainActivity extends Activity implements HidPeripheral.Listen
             runOnUiThread(() -> {
                 String state = hid.state();
                 try {
-                    if (HidPeripheral.PERMISSION.equals(state) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                        && (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+                            || checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED)) {
                         requestPermissions(new String[] {
                             Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE,
                         }, REQUEST_PERMISSION);
@@ -238,6 +240,14 @@ public final class MainActivity extends Activity implements HidPeripheral.Listen
         @JavascriptInterface public void makeVisible() {
             runOnUiThread(() -> {
                 try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                        && (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+                            || checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED)) {
+                        requestPermissions(new String[] {
+                            Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE,
+                        }, REQUEST_PERMISSION);
+                        return;
+                    }
                     Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                     intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, VISIBLE_SECONDS);
                     startActivityForResult(intent, REQUEST_VISIBLE);
