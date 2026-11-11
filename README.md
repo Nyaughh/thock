@@ -124,3 +124,7 @@ gradlew assembleDebug
 ```
 
 The result is `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+## Licence
+
+MIT, see `LICENSE`. The switch recordings in `public/sounds/` are from kbsim and carry their own MIT notice in `public/sounds/LICENSE.txt`.
