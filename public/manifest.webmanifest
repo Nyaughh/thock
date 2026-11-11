@@ -1,0 +1,13 @@
+{
+  "name": "Thock",
+  "short_name": "Thock",
+  "description": "Your phone as a mechanical keyboard and trackpad.",
+  "start_url": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#0a0b0c",
+  "theme_color": "#0a0b0c",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

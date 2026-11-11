@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Thock</string>
+
+    <color name="plate">#0A0B0C</color>
+
+    <style name="Thock" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/plate</item>
+        <item name="android:statusBarColor">@color/plate</item>
+        <item name="android:navigationBarColor">@color/plate</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+</resources>

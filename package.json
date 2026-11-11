@@ -1,0 +1,19 @@
+{
+  "name": "thock",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Use your phone or tablet as a mechanical keyboard and trackpad for your desktop, over Wi-Fi.",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js --dry-run --no-open",
+    "selftest": "node server/selftest.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4",
+    "ws": "^8.18.0"
+  }
+}

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Thock">
+  <meta name="theme-color" content="#0a0b0c">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/app.css">
+  <title>Thock</title>
+</head>
+<body>
+  <div id="stage" class="stage" data-link="idle">
+    <div id="deck" class="deck" data-dock="none">
+      <section id="pad" class="pad" aria-label="Trackpad">
+        <div id="surface" class="pad-surface"></div>
+        <div class="pad-buttons">
+          <button type="button" class="pad-btn" data-button="0" aria-label="Left click"></button>
+          <button type="button" class="pad-btn pad-back" id="padBack" aria-label="Back to keyboard">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6.5 10h1M10 10h1M13.5 10h1M17 10h.5M8 14h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <button type="button" class="pad-btn" data-button="1" aria-label="Right click"></button>
+        </div>
+      </section>
+      <section id="board" class="board" aria-label="Keyboard">
+        <div class="well">
+          <div id="glow" class="glow"></div>
+          <div id="keys" class="keys"></div>
+        </div>
+      </section>
+    </div>
+
+    <div id="pair" class="pair" hidden>
+      <div class="pair-copy">
+        <p class="eyebrow">Thock</p>
+        <h1>Type the code shown on your computer.</h1>
+        <div id="slots" class="slots" aria-live="polite"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <p id="pairMsg" class="pair-msg">Start Thock on the computer to see it.</p>
+      </div>
+      <div id="numpad" class="numpad" data-theme-scope></div>
+    </div>
+
+    <!-- Android app only: pairing over Bluetooth -->
+    <div id="bt" class="pair" hidden>
+      <div class="pair-copy">
+        <p class="eyebrow">Thock · Bluetooth</p>
+        <h1 id="btTitle">Starting Bluetooth…</h1>
+        <button id="btAction" class="solid" type="button" hidden></button>
+        <p id="btMsg" class="pair-msg"></p>
+      </div>
+      <div class="bt-side">
+        <ol id="btSteps" class="steps" hidden>
+          <li><span>Tap <b>Make this phone visible</b>.</span></li>
+          <li><span>On the computer, open Bluetooth settings and add a device.</span></li>
+          <li><span>Choose <b id="btName">this phone</b> and accept the code on both screens.</span></li>
+        </ol>
+        <div id="btHosts" class="hosts" hidden></div>
+      </div>
+    </div>
+
+    <aside id="drawer" class="drawer" aria-label="Settings"></aside>
+    <div id="toast" class="toast" role="status"></div>
+  </div>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

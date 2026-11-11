@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108">
+  <!-- One keycap from above, lit from underneath. The Android icon
+       (android/app/src/main/res/drawable/ic_keycap.xml) is the same drawing. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#202126"/>
+      <stop offset="1" stop-color="#09090b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="54" cy="60" r="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#b45cff" stop-opacity=".95"/>
+      <stop offset=".55" stop-color="#ff4fa3" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#ff4fa3" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="leak" x1="24" y1="0" x2="84" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4f8bff"/>
+      <stop offset=".5" stop-color="#b45cff"/>
+      <stop offset="1" stop-color="#ff4fa3"/>
+    </linearGradient>
+    <linearGradient id="skirt" x1="0" y1="26" x2="0" y2="83" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f1efea"/>
+      <stop offset=".12" stop-color="#d9d7d2"/>
+      <stop offset=".76" stop-color="#b9b7b2"/>
+      <stop offset="1" stop-color="#8b8985"/>
+    </linearGradient>
+    <linearGradient id="top" x1="0" y1="29" x2="0" y2="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fdfcfa"/>
+      <stop offset="1" stop-color="#e6e4df"/>
+    </linearGradient>
+    <linearGradient id="legend" x1="38" y1="36" x2="54" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5a6dff"/>
+      <stop offset="1" stop-color="#ff4fa3"/>
+    </linearGradient>
+  </defs>
+  <rect width="108" height="108" rx="24" fill="url(#bg)"/>
+  <circle cx="54" cy="60" r="40" fill="url(#glow)"/>
+  <!-- light leaking out under the cap -->
+  <path d="M33,29h42a9,9 0 0 1 9,9v39a9,9 0 0 1 -9,9h-42a9,9 0 0 1 -9,-9v-39a9,9 0 0 1 9,-9z" fill="url(#leak)"/>
+  <!-- skirt -->
+  <path d="M33,26h42a7,7 0 0 1 7,7v43a7,7 0 0 1 -7,7h-42a7,7 0 0 1 -7,-7v-43a7,7 0 0 1 7,-7z" fill="url(#skirt)"/>
+  <!-- top face -->
+  <path d="M37,29h34a5,5 0 0 1 5,5v31a5,5 0 0 1 -5,5h-34a5,5 0 0 1 -5,-5v-31a5,5 0 0 1 5,-5z" fill="url(#top)"/>
+  <!-- legend -->
+  <path d="M38,36h16v4.500h-5.750v15.500h-4.500v-15.500h-5.750z" fill="url(#legend)"/>
+</svg>
