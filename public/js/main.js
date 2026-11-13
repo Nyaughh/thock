@@ -330,7 +330,7 @@ if (isNative) {
     if (e.origin !== location.origin || typeof e.data?.thock !== 'object') return;
     for (const [key, value] of Object.entries(e.data.thock)) {
       set(key, value);
-      if (key === 'switch') sound.demo();
+      if (key === 'switch') { sound.setSwitch(value); sound.demo(); }
     }
   });
 } else {
