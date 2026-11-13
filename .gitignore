@@ -6,3 +6,5 @@ android/build/
 android/app/build/
 *.apk
 .claude/
+dist/
+.vercel/

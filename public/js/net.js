@@ -8,6 +8,19 @@ function deviceName() {
   return 'Browser';
 }
 
+/** Stands in for a computer on the website's demo: always connected, sends nothing. */
+export class DemoLink {
+  onState = () => {};
+  onMessage = () => {};
+  latency = null;
+  host = 'this demo';
+  isOpen = true;
+  connect() { this.onState('open'); }
+  wake() {}
+  disconnect() {}
+  send() {}
+}
+
 /**
  * Events (via on*): onState(state, detail)
  *   'connecting' | 'open' { host } | 'retrying' | 'rejected' { reason } | 'closed'

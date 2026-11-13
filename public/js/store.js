@@ -12,31 +12,40 @@ const DEFAULTS = {
   volume: 0.8,
   haptics: true,
   // keycaps
-  profile: 'cherry',
-  colorway: 'f75-grad-black',
+  profile: 'oem',
+  colorway: 'rainy-purple',
   caseColor: 'auto',
   custom: { alpha: '#2a2b2f', mod: '#5c5f66', accent: '#d8d0ba' },
-  legends: 'corner',
-  font: 'sans',
+  legends: 'center',
+  font: 'mono',
   // glow
-  lit: 'wave',      // legends lit from behind: off | solid | cycle | wave
+  lit: 'off',       // legends lit from behind: off | solid | cycle | wave
   glow: 'off',      // light under the keys
   ...DEFAULT_LIGHTING,
   // controls
   sticky: true,
   repeat: true,
-  layout: 'auto',
-  dock: 'auto',
+  layout: 'full',
+  dock: 'off',
   rotate: 'auto',
   speed: 1.6,
   natural: true,
   fullscreen: true,
 };
 
+// The website shows the keyboard with ?demo in the address: nothing is paired
+// or saved, and the address can choose the look (?demo&colorway=retro).
+const params = new URLSearchParams(globalThis.location?.search ?? '');
+export const demo = params.has('demo');
+const fromAddress = {};
+if (demo) for (const [key, value] of params) if (typeof DEFAULTS[key] === 'string') fromAddress[key] = value;
+
 function read(key) {
+  if (demo) return null;
   try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
 }
 function write(key, value) {
+  if (demo) return;
   try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* private mode */ }
 }
 
@@ -46,6 +55,7 @@ const { glowHue: legacyHue, ...current } = saved;
 export const settings = {
   ...DEFAULTS, ...current, ...normalizeLighting(saved),
   custom: { ...DEFAULTS.custom, ...saved.custom },
+  ...fromAddress,
 };
 
 const listeners = new Set();

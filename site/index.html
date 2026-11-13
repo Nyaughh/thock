@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thock: your phone is a mechanical keyboard</title>
+  <meta name="description" content="Thock turns an Android phone or tablet into a full-screen 75% mechanical keyboard and trackpad. It pairs over Bluetooth like a real one, with nothing to install on the computer.">
+  <meta name="theme-color" content="#C4AEE9">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thock.lh3k.dev/">
+  <meta property="og:title" content="Thock: your phone is a mechanical keyboard">
+  <meta property="og:description" content="A full-screen 75% keyboard and trackpad for Android. Pairs over Bluetooth, sounds like real switches.">
+  <meta property="og:image" content="https://thock.lh3k.dev/shots/purple.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/site.css">
+</head>
+<body>
+  <div class="hero">
+    <header class="nav">
+      <a class="brand" href="/" aria-label="Thock, home">
+        <img src="/icon.svg" width="40" height="40" alt="">
+        <span>thock</span>
+      </a>
+      <nav>
+        <a href="#install">Install</a>
+        <a href="#releases">Releases</a>
+        <a href="https://github.com/Nyaughh/thock">GitHub</a>
+      </nav>
+    </header>
+
+    <div class="deco" aria-hidden="true">
+      <span class="cap-toy t1">T</span>
+      <span class="cap-toy t2">H</span>
+      <span class="cap-toy t3">O</span>
+      <span class="cap-toy t4">C</span>
+      <span class="cap-toy t5">K</span>
+    </div>
+
+    <section class="intro">
+      <p class="kicker">Free and open source, for Android</p>
+      <h1>Your phone is a <span class="sticker">mechanical keyboard.</span></h1>
+      <p class="lede">Thock turns a phone or tablet into a full-screen 75% keyboard and trackpad. It pairs over Bluetooth like a real one, so there is nothing to install on the computer.</p>
+      <div class="cta">
+        <a class="cap big" data-apk href="https://github.com/Nyaughh/thock/releases/latest/download/thock.apk">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download for Android
+        </a>
+        <p class="meta" id="heroMeta">Android 9 or newer</p>
+      </div>
+    </section>
+
+    <section class="try" aria-label="Live demo">
+      <div class="phone">
+        <div class="screen">
+          <iframe id="demo" title="The Thock keyboard, running live" src="/app/?demo" allow="autoplay"></iframe>
+        </div>
+      </div>
+      <p class="hint">This is the real keyboard, not a picture. Press a key, with your sound on.</p>
+
+      <div class="picker">
+        <div class="pick">
+          <span class="pick-label" id="swLabel">Switch</span>
+          <div class="chips" role="group" aria-labelledby="swLabel" id="switches">
+            <button type="button" class="chip" data-switch="blackink" aria-pressed="true">Black Ink</button>
+            <button type="button" class="chip" data-switch="cream" aria-pressed="false">Cream</button>
+            <button type="button" class="chip" data-switch="holypanda" aria-pressed="false">Holy Panda</button>
+            <button type="button" class="chip" data-switch="topre" aria-pressed="false">Topre</button>
+            <button type="button" class="chip" data-switch="mxblue" aria-pressed="false">MX Blue</button>
+            <button type="button" class="chip" data-switch="boxnavy" aria-pressed="false">Box Navy</button>
+            <button type="button" class="chip" data-switch="buckling" aria-pressed="false">Buckling spring</button>
+          </div>
+        </div>
+        <div class="pick">
+          <span class="pick-label" id="cwLabel">Keycaps</span>
+          <div class="chips" role="group" aria-labelledby="cwLabel" id="looks">
+            <button type="button" class="dot" aria-pressed="true" aria-label="Rainy Purple" title="Rainy Purple" style="--a:#f6f3fb;--b:#cabdf0;--c:#7a62c8" data-look='{"colorway":"rainy-purple","lit":"off","legends":"center"}'></button>
+            <button type="button" class="dot" aria-pressed="false" aria-label="F75 Black with RGB legends" title="F75 Black, RGB legends" style="--a:#c2c0bb;--b:#8d8c89;--c:#2c2d30" data-look='{"colorway":"f75-grad-black","lit":"wave","legends":"side"}'></button>
+            <button type="button" class="dot" aria-pressed="false" aria-label="Retro" title="Retro" style="--a:#e8e1cf;--b:#b3ad9b;--c:#c4513d" data-look='{"colorway":"retro","lit":"off","legends":"center"}'></button>
+            <button type="button" class="dot" aria-pressed="false" aria-label="Rainy Pink" title="Rainy Pink" style="--a:#fbece8;--b:#f2bfcd;--c:#cc5c7b" data-look='{"colorway":"rainy-pink","lit":"off","legends":"center"}'></button>
+            <button type="button" class="dot" aria-pressed="false" aria-label="Mint gradient" title="Mint gradient" style="--a:#e9f3ee;--b:#9fd6c2;--c:#3f9c8a" data-look='{"colorway":"grad-mint","lit":"off","legends":"center"}'></button>
+            <button type="button" class="dot" aria-pressed="false" aria-label="Harbor" title="Harbor" style="--a:#1e3152;--b:#131f38;--c:#f1c84b" data-look='{"colorway":"harbor","lit":"off","legends":"center"}'></button>
+            <button type="button" class="dot" aria-pressed="false" aria-label="Terminal" title="Terminal" style="--a:#111612;--b:#0a0e0b;--c:#4dff88" data-look='{"colorway":"terminal","lit":"off","legends":"center"}'></button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <main>
+    <section class="features" aria-label="What you get">
+      <article>
+        <span class="glyph">BT</span>
+        <h2>Pairs like a real keyboard</h2>
+        <p>The computer sees a Bluetooth keyboard and mouse. No program to run, no driver, no account, and nothing to keep updated on the computer.</p>
+      </article>
+      <article>
+        <span class="glyph">13</span>
+        <h2>Sounds like the real thing</h2>
+        <p>Thirteen switches, all recordings of real ones: Black Ink, Cream, Holy Panda, Topre, MX Blue, buckling spring and more. Every row has its own sound, and so does the space bar.</p>
+      </article>
+      <article>
+        <span class="glyph">RGB</span>
+        <h2>Looks like your board</h2>
+        <p>Colourways after the Aula F75 and Rainy75, or your own three colours. Six keycap profiles, a white or black case, lit legends and light under the keys.</p>
+      </article>
+      <article>
+        <span class="glyph">75%</span>
+        <h2>All the keys, and a trackpad</h2>
+        <p>A full 75% layout with a function row, arrows and an Fn layer for media keys. One key swaps the whole screen for a trackpad with tap, scroll and drag.</p>
+      </article>
+    </section>
+
+    <section class="shots" aria-labelledby="shotsTitle">
+      <h2 class="title" id="shotsTitle">Pick a look</h2>
+      <div class="shot-grid">
+        <figure>
+          <a href="/shots/black-rgb.jpg"><img src="/shots/black-rgb.jpg" width="2532" height="1170" loading="lazy" alt="A black gradient keyboard with rainbow lit legends printed on the front of each key"></a>
+          <figcaption>F75 Black gradient, side-printed RGB legends</figcaption>
+        </figure>
+        <figure>
+          <a href="/shots/retro-65.jpg"><img src="/shots/retro-65.jpg" width="2532" height="1170" loading="lazy" alt="A beige keyboard with red accent keys in the smaller 65% layout"></a>
+          <figcaption>Retro, in the 65% layout</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="install" id="install" aria-labelledby="installTitle">
+      <h2 class="title" id="installTitle">Pair it in a minute</h2>
+      <ol class="steps">
+        <li><span class="glyph small">1</span><p>Download <a data-apk href="https://github.com/Nyaughh/thock/releases/latest/download/thock.apk">thock.apk</a> on the phone and open it to install. Android asks once to allow installing from your browser.</p></li>
+        <li><span class="glyph small">2</span><p>Open Thock and allow the <b>Nearby devices</b> permission.</p></li>
+        <li><span class="glyph small">3</span><p>Tap <b>Make this phone visible</b>.</p></li>
+        <li><span class="glyph small">4</span><p>On the computer, open Bluetooth settings, add a device, and pick the phone.</p></li>
+      </ol>
+      <p class="after">Next time, open Thock and it reconnects to the last computer on its own. Android only lets an app be a keyboard while it is on screen, so leaving Thock disconnects it.</p>
+    </section>
+
+    <section class="releases" id="releases" aria-labelledby="relTitle">
+      <h2 class="title" id="relTitle">Releases</h2>
+      <div class="release" id="latest" aria-live="polite">
+        <div class="release-main">
+          <p class="kicker">Latest release</p>
+          <h3 id="relName">Thock for Android</h3>
+          <p class="meta" id="relMeta">Checking GitHub for the newest version…</p>
+          <div class="notes" id="relNotes"></div>
+        </div>
+        <div class="release-side">
+          <a class="cap" data-apk href="https://github.com/Nyaughh/thock/releases/latest/download/thock.apk">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download APK
+          </a>
+          <a class="quiet" id="relSum" href="https://github.com/Nyaughh/thock/releases/latest">View on GitHub</a>
+        </div>
+      </div>
+      <ul class="older" id="older"></ul>
+      <p class="after"><a href="https://github.com/Nyaughh/thock/releases">All releases on GitHub</a></p>
+    </section>
+
+    <section class="ios" aria-labelledby="iosTitle">
+      <h2 id="iosTitle">On an iPhone or iPad?</h2>
+      <p>Apple does not let an app act as a Bluetooth keyboard. Thock also runs in the browser over Wi-Fi, with a small program on a Windows PC. <a href="https://github.com/Nyaughh/thock/blob/main/docs/GUIDE.md#iphone-ipad-or-any-browser-wi-fi">Set it up from the guide</a>.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p><a href="https://github.com/Nyaughh/thock">Source on GitHub</a> · MIT licence · Made by <a href="https://github.com/Nyaughh">Nyaughh</a></p>
+    <p>Switch recordings from <a href="https://github.com/tplai/kbsim">kbsim</a> by Thomas Lai.</p>
+  </footer>
+
+  <script src="/site.js" defer></script>
+</body>
+</html>

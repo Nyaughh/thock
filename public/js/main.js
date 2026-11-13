@@ -1,10 +1,10 @@
-import { settings, set, onChange, pairing } from './store.js';
+import { settings, set, onChange, pairing, demo } from './store.js';
 import { LAYOUTS, rowUnits } from './layouts.js';
 import { applyTheme, keyTint } from './themes.js';
 import { Keyboard } from './keyboard.js';
 import { Trackpad } from './trackpad.js';
 import { Sound, SWITCHES, DEFAULT_SWITCH } from './sound.js';
-import { Link } from './net.js';
+import { Link, DemoLink } from './net.js';
 import { NativeLink, isNative } from './native.js';
 import { initBluetoothPairing } from './bt-pair.js';
 import { LegendLight } from './lit.js';
@@ -28,7 +28,7 @@ if (!SWITCHES.some((s) => s.id === settings.switch)) set('switch', DEFAULT_SWITC
 const sound = new Sound();
 // Inside the Android app the phone is a Bluetooth keyboard; in a browser it
 // talks to the desktop program over Wi-Fi. Everything else is shared.
-const link = isNative ? new NativeLink() : new Link();
+const link = isNative ? new NativeLink() : demo ? new DemoLink() : new Link();
 
 const keyboard = new Keyboard({
   el: $('#keys'),
@@ -139,7 +139,7 @@ const ui = buildSettings({
   onForget: () => {
     link.disconnect();
     closeDrawer();
-    if (isNative) return; // the Bluetooth pairing screen comes back by itself
+    if (isNative || demo) return; // the Bluetooth pairing screen comes back by itself
     pairing.clear();
     code = null;
     showPair('Forgotten. Type the code to pair again.');
@@ -280,7 +280,7 @@ let triedFullscreen = false;
 function onGesture() {
   sound.unlock();
   const root = document.documentElement;
-  if (isNative || triedFullscreen || !settings.fullscreen || !root.requestFullscreen) return;
+  if (isNative || demo || triedFullscreen || !settings.fullscreen || !root.requestFullscreen) return;
   triedFullscreen = true;
   if (matchMedia('(pointer: coarse)').matches && !document.fullscreenElement) {
     root.requestFullscreen({ navigationUI: 'hide' }).catch(() => {});
@@ -323,6 +323,16 @@ if (isNative) {
     if (padFull) { trackpad.reset(); padFull = false; layout(); return true; }
     return false;
   };
+} else if (demo) {
+  link.connect();
+  // The website's buttons change the switch and the colourway of its demo.
+  addEventListener('message', (e) => {
+    if (e.origin !== location.origin || typeof e.data?.thock !== 'object') return;
+    for (const [key, value] of Object.entries(e.data.thock)) {
+      set(key, value);
+      if (key === 'switch') sound.demo();
+    }
+  });
 } else {
   const known = fromLink ?? pairing.get();
   if (known) connect(String(known));
