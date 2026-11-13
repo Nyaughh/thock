@@ -36,7 +36,12 @@ const keyboard = new Keyboard({
   sound,
   send: (key, down) => link.send([down ? 'kd' : 'ku', key]),
   onAction: (key) => {
-    if (key === '$settings') return drawerOpen ? closeDrawer() : openDrawer();
+    if (key === '$settings') {
+      // A demo framed on a phone is too small to hold the drawer, so the
+      // page around it shows its own pickers instead.
+      if (demo && !drawerOpen && window.innerHeight < 300) return window.parent.postMessage({ thock: 'settings' }, location.origin);
+      return drawerOpen ? closeDrawer() : openDrawer();
+    }
     if (key === '$pad') { padFull = true; layout(); }
   },
 });

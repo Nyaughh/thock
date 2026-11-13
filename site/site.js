@@ -30,6 +30,17 @@ looks.addEventListener('click', (e) => {
   tell(JSON.parse(button.dataset.look));
 });
 
+// On a phone the demo is too small for the app's own settings drawer. Its
+// settings key points here instead: to the pickers under the phone.
+const picker = document.querySelector('.picker');
+addEventListener('message', (e) => {
+  if (e.origin !== location.origin || e.source !== demo.contentWindow || e.data?.thock !== 'settings') return;
+  picker.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  picker.classList.remove('nudge');
+  void picker.offsetWidth; // so the nudge plays again
+  picker.classList.add('nudge');
+});
+
 // ── Releases ─────────────────────────────────────────────────────────────────
 
 const CACHE_KEY = 'thock.releases';
@@ -72,11 +83,13 @@ function el(tag, props = {}, ...children) {
   return node;
 }
 
-/** **bold** and `code` inside one line of release notes. */
+/** **bold**, `code` and [links](https://…) inside one line of release notes. */
 function inline(tag, text) {
   const node = document.createElement(tag);
-  for (const part of text.split(/(\*\*[^*]+\*\*|`[^`]+`)/)) {
-    if (part.startsWith('**')) node.append(el('b', {}, part.slice(2, -2)));
+  for (const part of text.split(/(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\(https?:\/\/[^)\s]+\))/)) {
+    const link = part.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+    if (link) node.append(el('a', { href: link[2] }, link[1]));
+    else if (part.startsWith('**')) node.append(el('b', {}, part.slice(2, -2)));
     else if (part.startsWith('`')) node.append(el('code', {}, part.slice(1, -1)));
     else if (part) node.append(part);
   }
