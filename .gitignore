@@ -8,3 +8,4 @@ android/app/build/
 .claude/
 dist/
 .vercel/
+.env*
