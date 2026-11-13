@@ -198,8 +198,10 @@ main > section { padding: clamp(48px, 8vw, 88px) 0 0; }
 .features p { color: var(--plum-soft); max-width: 46ch; }
 @media (max-width: 700px) { .features { grid-template-columns: 1fr; } }
 
-.shot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-.shot-grid a { display: block; overflow: hidden; border: var(--line) solid var(--plum); border-radius: 16px; box-shadow: 0 6px 0 var(--tan); background: #222; }
+/* The screenshots are the keyboard alone, cut to its case, so they sit on the
+   page like the real thing: no frame, nothing to clip their corners. */
+.shot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; align-items: end; }
+.shot-grid a { display: block; filter: drop-shadow(0 6px 0 var(--tan)) drop-shadow(0 14px 18px rgba(75, 16, 67, .16)); }
 figcaption { margin-top: 16px; text-align: center; font: 400 .84rem/1.5 var(--mono); color: var(--plum-soft); }
 @media (max-width: 700px) { .shot-grid { grid-template-columns: 1fr; gap: 28px; } }
 

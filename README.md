@@ -29,11 +29,11 @@ On an iPhone or iPad, Thock runs in the browser over Wi-Fi with a small program 
 ### App preview
 
 <p align="center">
-  <a href="docs/screenshots/purple.jpg"><img src="docs/screenshots/purple.jpg" width="820" alt="The keyboard in Rainy Purple: white and lavender OEM keycaps with centred legends" /></a>
+  <a href="docs/screenshots/purple.webp"><img src="docs/screenshots/purple.webp" width="820" alt="The keyboard in Rainy Purple: white and lavender OEM keycaps with centred legends" /></a>
 </p>
 <p align="center">
-  <a href="docs/screenshots/black-rgb.jpg"><img src="docs/screenshots/black-rgb.jpg" width="405" alt="A black gradient keyboard with rainbow lit legends printed on the front of each key" /></a>
-  <a href="docs/screenshots/retro-65.jpg"><img src="docs/screenshots/retro-65.jpg" width="405" alt="A beige keyboard with red accent keys in the smaller 65% layout" /></a>
+  <a href="docs/screenshots/black-rgb.webp"><img src="docs/screenshots/black-rgb.webp" width="405" alt="A black gradient keyboard with rainbow lit legends printed on the front of each key" /></a>
+  <a href="docs/screenshots/retro-65.webp"><img src="docs/screenshots/retro-65.webp" width="405" alt="A beige keyboard with red accent keys in the smaller 65% layout" /></a>
 </p>
 
 Try it in the browser at [thock.lh3k.dev](https://thock.lh3k.dev).

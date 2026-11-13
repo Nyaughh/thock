@@ -133,7 +133,7 @@ The result is `android/app/build/outputs/apk/debug/app-debug.apk`.
 
 ## The website
 
-[thock.lh3k.dev](https://thock.lh3k.dev) is `site/` plus the keyboard itself, which the page shows live. Opening the keyboard with `?demo` in the address skips pairing, sends nothing and saves nothing; settings can be given in the address too (`?demo&colorway=retro&layout=compact`), which is also how the screenshots in `docs/screenshots/` are taken.
+[thock.lh3k.dev](https://thock.lh3k.dev) is `site/` plus the keyboard itself, which the page shows live. Opening the keyboard with `?demo` in the address skips pairing, sends nothing and saves nothing; settings can be given in the address too (`?demo&colorway=retro&layout=compact`), which is how `tools/screenshots.mjs` takes the ones in `docs/screenshots/`.
 
 ```
 node tools/build-site.mjs
